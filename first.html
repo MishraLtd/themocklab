@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>The Mock Labs | Coming Soon</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            * {
+                cursor: none; /* Hide default cursor for custom one */
+            }
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Nav / Brand */
+        nav {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            padding: 2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            mix-blend-mode: difference;
+        }
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .status {
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-dot {
+            width: 6px; height: 6px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { opacity: 0.5; box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        /* Film Grain Overlay */
+        .noise {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            height: 100dvh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.05;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noise)"/%3E%3C/svg%3E');
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            top: 0; left: 0;
+            width: 20px; height: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10000;
+            transition: width 0.3s, height 0.3s, background-color 0.3s, mix-blend-mode 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cursor.hovering {
+            width: 80px; height: 80px;
+            background-color: #fff;
+            mix-blend-mode: difference;
+            border-color: transparent;
+        }
+
+        /* Smooth Scroll Fixes */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-scroll-container] { will-change: transform; }
+
+        /* Canvas Background */
+        #webgl-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            height: 100dvh;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Layout Structure */
+        main {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        section {
+            position: relative;
+            min-height: 100vh;
+            min-height: 100dvh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem 10vw;
+        }
+
+        h1, h2, .serif {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+        }
+
+        /* Hero Section */
+        .hero {
+            flex-direction: column;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 12rem);
+            line-height: 0.9;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        .hero p {
+            font-size: 1rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            opacity: 0;
+            color: var(--text-muted);
+        }
+
+        /* Narrative Text Reveal */
+        .narrative {
+            font-size: clamp(1.5rem, 5vw, 3.5rem);
+            line-height: 1.3;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .narrative span {
+            opacity: 0.1;
+            transition: opacity 0.1s;
+        }
+
+        /* Horizontal Scroll Section - "The Laboratory" */
+        .horizontal-wrapper {
+            height: 100vh; 
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            background: #000;
+        }
+        .horizontal-container {
+            display: flex;
+            width: max-content;
+            height: 70vh;
+            padding: 0 10vw;
+            gap: 5vw;
+        }
+        .card {
+            width: 40vw;
+            min-width: 300px;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        .card img {
+            width: 100%;
+            height: 120%;
+            object-fit: cover;
+            position: absolute;
+            top: -10%;
+            filter: grayscale(100%) contrast(1.2);
+            transition: filter 0.8s ease;
+        }
+        .card:hover img { filter: grayscale(0%) contrast(1); }
+        
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2.5rem;
+            opacity: 0.6;
+            transition: opacity 0.5s ease;
+        }
+        .card:hover .card-overlay { opacity: 1; }
+        .card h3 { font-size: 2.5rem; font-family: 'Cormorant Garamond', serif; margin-bottom: 0.5rem; }
+        .card p { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); }
+
+        /* End Section - Notify Form */
+        .outro {
+            flex-direction: column;
+            background: var(--bg-color);
+            text-align: center;
+        }
+        .email-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-main);
+            font-size: 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            padding: 1rem 0;
+            width: 100%;
+            max-width: 400px;
+            margin: 2rem auto 3rem auto;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.4s ease;
+            -webkit-appearance: none;
+            appearance: none;
+            border-radius: 0;
+        }
+        .email-input:focus { border-bottom-color: #fff; }
+        .email-input::placeholder { color: rgba(255,255,255,0.2); font-weight: 200; }
+        
+        .magnetic-btn {
+            padding: 1.5rem 4rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            background: transparent;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            transition: border-color 0.3s;
+            cursor: pointer;
+        }
+        .magnetic-btn:hover { border-color: #fff; }
+
+        @media (max-width: 768px) {
+            .card { width: 85vw; }
+            .status span { display: none; }
+            .card-overlay { opacity: 0.85; padding: 1.5rem; }
+            .card h3 { font-size: 2rem; }
+            .card img { filter: grayscale(0%) contrast(1); }
+            .horizontal-container { gap: 8vw; }
+            nav { padding-top: calc(2rem + env(safe-area-inset-top)); }
+        }
+
+        /* Chatbot Widget */
+        #chatbot-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            font-family: 'Montserrat', sans-serif;
+        }
+        #chatbot-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #fff;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255,255,255,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        #chatbot-button svg {
+            width: 28px;
+            height: 28px;
+        }
+        #chatbot-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(255,255,255,0.3);
+        }
+        #chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background-color: #0d0d0d;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        #chatbot-window.open {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+        #chatbot-header {
+            padding: 1.2rem;
+            background-color: #1a1a1a;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #chatbot-header h3 {
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin: 0;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        #chatbot-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        #chatbot-close:hover {
+            color: #fff;
+        }
+        #chatbot-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .message {
+            max-width: 80%;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        .message.bot {
+            background-color: #1a1a1a;
+            color: #fff;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+        .message.user {
+            background-color: #fff;
+            color: #000;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        #chatbot-input-area {
+            padding: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            gap: 0.5rem;
+            background-color: #0d0d0d;
+        }
+        #chatbot-input {
+            flex: 1;
+            background-color: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 0.8rem 1rem;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        #chatbot-input:focus {
+            border-color: rgba(255,255,255,0.3);
+        }
+        #chatbot-send {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        #chatbot-send:hover {
+            transform: scale(1.05);
+        }
+        #chatbot-send svg {
+            width: 18px;
+            height: 18px;
+            margin-right: 2px;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 768px) {
+            #chatbot-window {
+                width: calc(100vw - 4rem);
+                height: 60vh;
+                bottom: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo hover-target">The Mock Labs</div>
+        <div class="status hover-target">
+            <span>System Initializing</span>
+            <div class="status-dot"></div>
+        </div>
+    </nav>
+
+    <div class="noise"></div>
+    <div class="cursor" id="custom-cursor"></div>
+    <canvas id="webgl-canvas"></canvas>
+
+    <main>
+        <section class="hero">
+            <h1 class="gsap-hero">The Mock<br>Labs.</h1>
+            <p class="gsap-hero">The future is under construction. Coming soon.</p>
+        </section>
+
+        <section class="narrative">
+            <p id="split-text">
+                We are currently engineering a new paradigm of digital interaction. 
+                In our lab, aesthetics meet advanced logic. Anticipate the unseen.
+            </p>
+        </section>
+
+        <section class="horizontal-wrapper" id="horizontal-sec">
+            <div class="horizontal-container" id="horizontal-container">
+                <div class="card hover-target">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" class="para-img" alt="Phase 01">
+                    <div class="card-overlay">
+                        <h3>Hypothesis</h3>
+                        <p>Phase 01</p>
+                    </div>
+                </div>
+                <div class="card hover-target">
+                    <img src="https://images.unsplash.com/photo-1604871000636-074fa5117945?q=80&w=1000&auto=format&fit=crop" class="para-img" alt="Phase 02">
+                    <div class="card-overlay">
+                        <h3>Prototyping</h3>
+                        <p>Phase 02</p>
+                    </div>
+                </div>
+                <div class="card hover-target">
+                    <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop" class="para-img" alt="Phase 03">
+                    <div class="card-overlay">
+                        <h3>Synthesis</h3>
+                        <p>Phase 03</p>
+                    </div>
+                </div>
+                <div class="card hover-target">
+                    <img src="https://images.unsplash.com/photo-1506259091721-347e791bab0f?q=80&w=1000&auto=format&fit=crop" class="para-img" alt="Phase 04">
+                    <div class="card-overlay">
+                        <h3>Ignition</h3>
+                        <p>Launch Sequence</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="outro">
+            <h2 class="serif gsap-fade" style="font-size: clamp(3rem, 6vw, 6rem); margin-bottom: 1rem;">Be the first to know.</h2>
+            <p class="gsap-fade" style="color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; font-size: 0.8rem;">Leave your email to receive launch access.</p>
+            
+            <input type="email" class="email-input hover-target gsap-fade" placeholder="Enter your email address" />
+            
+            <div class="magnetic-btn hover-target gsap-fade" id="magnet">Notify Me</div>
+        </section>
+    </main>
+
+    <!-- Chatbot HTML -->
+    <div id="chatbot-container">
+        <div id="chatbot-button" class="hover-target">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <div id="chatbot-window">
+            <div id="chatbot-header">
+                <h3>Lab Assistant</h3>
+                <button id="chatbot-close" class="hover-target">✕</button>
+            </div>
+            <div id="chatbot-messages">
+                <div class="message bot">Hello! I'm the Lab Assistant. Ask me anything about JEE, NEET, or The Mock Labs platform.</div>
+            </div>
+            <div id="chatbot-input-area">
+                <input type="text" id="chatbot-input" class="hover-target" placeholder="Type your query..." />
+                <button id="chatbot-send" class="hover-target">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. Smooth Scroll (Lenis) Setup
+        const lenis = new Lenis({
+            duration: 1.5,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+        });
+        
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000) });
+        gsap.ticker.lagSmoothing(0);
+
+        // 2. Custom Cursor Logic
+        const cursor = document.getElementById('custom-cursor');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        
+        let isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+        if (!isTouchDevice) {
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                gsap.to(cursor, { x: mouseX, y: mouseY, duration: 0.1, ease: "power2.out" });
+            });
+
+            // Hover Effects for specific elements (Inputs, Buttons, Cards)
+            document.querySelectorAll('.hover-target, input').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+            });
+
+            // 3. Magnetic Button Effect
+            const magnet = document.getElementById('magnet');
+            if (magnet) {
+                magnet.addEventListener('mousemove', function(e) {
+                    const pos = this.getBoundingClientRect();
+                    const x = e.clientX - pos.left - pos.width / 2;
+                    const y = e.clientY - pos.top - pos.height / 2;
+                    
+                    gsap.to(this, { x: x * 0.3, y: y * 0.3, duration: 0.5, ease: "power3.out" });
+                });
+                magnet.addEventListener('mouseleave', function() {
+                    gsap.to(this, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
+                });
+            }
+        } else {
+            if (cursor) cursor.style.display = 'none';
+        }
+
+        // 4. GSAP Storytelling Animations
+        
+        // Intro Hero animation
+        gsap.to(".gsap-hero", {
+            y: 0, opacity: 1, duration: 2, stagger: 0.2, ease: "expo.out", delay: 0.5
+        });
+
+        // Split text for word-by-word reveal
+        const textElement = document.getElementById('split-text');
+        const words = textElement.innerText.split(' ');
+        textElement.innerHTML = '';
+        words.forEach(word => {
+            const span = document.createElement('span');
+            span.innerText = word + ' ';
+            textElement.appendChild(span);
+        });
+
+        // Narrative word highlight on scroll
+        gsap.to("#split-text span", {
+            scrollTrigger: {
+                trigger: ".narrative",
+                start: "top 60%",
+                end: "bottom 60%",
+                scrub: 1
+            },
+            opacity: 1,
+            stagger: 0.1,
+            ease: "none"
+        });
+
+        // Horizontal Scroll Pinning
+        const horizontalSec = document.getElementById('horizontal-sec');
+        const container = document.getElementById('horizontal-container');
+        
+        function getScrollAmount() {
+            let containerWidth = container.scrollWidth;
+            return -(containerWidth - window.innerWidth + (window.innerWidth * 0.1)); 
+        }
+
+        const tween = gsap.to(container, {
+            x: getScrollAmount,
+            ease: "none"
+        });
+
+        ScrollTrigger.create({
+            trigger: horizontalSec,
+            start: "top top",
+            end: () => `+=${getScrollAmount() * -1}`,
+            pin: true,
+            animation: tween,
+            scrub: 1,
+            invalidateOnRefresh: true
+        });
+
+        // Internal Image Parallax within horizontal scroll
+        gsap.utils.toArray('.card').forEach(card => {
+            const img = card.querySelector('.para-img');
+            gsap.to(img, {
+                y: "10%", 
+                ease: "none",
+                scrollTrigger: {
+                    trigger: horizontalSec,
+                    start: "top top",
+                    end: () => `+=${getScrollAmount() * -1}`,
+                    scrub: true
+                }
+            });
+        });
+
+        // Outro Fade Animations
+        gsap.from(".gsap-fade", {
+            scrollTrigger: {
+                trigger: ".outro",
+                start: "top 75%",
+            },
+            y: 40,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power3.out"
+        });
+
+        // 5. Hypnotic WebGL-style Canvas Particle Field (The "Lab Network")
+        const canvas = document.getElementById('webgl-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        let lastInnerWidth = window.innerWidth;
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', () => {
+            if (window.innerWidth !== lastInnerWidth) {
+                lastInnerWidth = window.innerWidth;
+                resizeCanvas();
+                initParticles();
+            }
+        });
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.life = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                // Interactive mouse repulsion
+                let dx = mouseX - this.x;
+                let dy = mouseY - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 150) {
+                    this.x -= dx * 0.01;
+                    this.y -= dy * 0.01;
+                }
+
+                this.x += this.speedX;
+                this.y -= this.speedY + 0.5; // Always drift up slowly
+
+                // Wrap around screen
+                if (this.y < 0) this.y = height;
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const particleCount = window.innerWidth < 768 ? 40 : 120;
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw connecting lines (The 'Network/Lab' feel)
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+            ctx.lineWidth = 0.5;
+            for(let i=0; i<particles.length; i++){
+                for(let j=i; j<particles.length; j++){
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if(dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        // Chatbot Logic
+        const chatbotBtn = document.getElementById('chatbot-button');
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const chatbotClose = document.getElementById('chatbot-close');
+        const chatbotInput = document.getElementById('chatbot-input');
+        const chatbotSend = document.getElementById('chatbot-send');
+        const chatbotMessages = document.getElementById('chatbot-messages');
+
+        chatbotBtn.addEventListener('click', () => {
+            chatbotWindow.classList.toggle('open');
+        });
+
+        chatbotClose.addEventListener('click', () => {
+            chatbotWindow.classList.remove('open');
+        });
+
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', sender);
+            msgDiv.innerText = text;
+            chatbotMessages.appendChild(msgDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        const qaDatabase = [
+            { keywords: ['jee', 'main', 'exam date', 'when'], answer: 'JEE Main is typically conducted in two sessions: January and April.' },
+            { keywords: ['jee', 'advanced', 'eligibility'], answer: 'To be eligible for JEE Advanced, you must be among the top 2.5 lakh successful candidates in B.E./B.Tech. paper of JEE Main.' },
+            { keywords: ['neet', 'pattern', 'marks'], answer: 'NEET consists of 200 multiple-choice questions (180 to be attempted) from Physics, Chemistry, and Biology. The total marks are 720.' },
+            { keywords: ['neet', 'eligibility', 'age'], answer: 'For NEET, you must have completed 17 years of age at the time of admission or will complete that age on or before 31 December of the year of admission.' },
+            { keywords: ['mock lab', 'platform', 'about', 'what'], answer: 'The Mock Labs is an advanced platform engineered to provide a premium exam preparation experience for JEE and NEET aspirants.' },
+            { keywords: ['syllabus', 'jee'], answer: 'The JEE Main syllabus covers Physics, Chemistry, and Mathematics from classes 11 and 12.' },
+            { keywords: ['syllabus', 'neet'], answer: 'The NEET syllabus covers Physics, Chemistry, and Biology (Botany & Zoology) from classes 11 and 12.' },
+            { keywords: ['hello', 'hi', 'hey'], answer: 'Hello! How can I assist you with your JEE or NEET preparation today?' }
+        ];
+
+        function getBotResponse(userText) {
+            const lowerText = userText.toLowerCase();
+            
+            for (let qa of qaDatabase) {
+                if (qa.keywords.some(kw => lowerText.includes(kw))) {
+                    return qa.answer;
+                }
+            }
+            
+            return "I'm sorry, I don't have a specific answer for that. You can ask me general questions about JEE dates, NEET syllabus, eligibility, and the exam pattern.";
+        }
+
+        function handleSend() {
+            const text = chatbotInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            chatbotInput.value = '';
+
+            // Simulate typing delay
+            setTimeout(() => {
+                const response = getBotResponse(text);
+                addMessage(response, 'bot');
+            }, 600);
+        }
+
+        chatbotSend.addEventListener('click', handleSend);
+        chatbotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Mock Lab | Premium Exam Prep</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8823736495966036"
+        crossorigin="anonymous"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --bg-base: #0D0F14;
+            --bg-surface: #161922;
+            --bg-elevated: #1E2330;
+            --border: #252A35;
+            --accent: #6C63FF;
+            --accent-hover: #7B74FF;
+            --text-primary: #F1F3F9;
+            --text-secondary: #A8B0C8;
+            --text-muted: #7A8199;
+            --success: #22C55E;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+
+            --sidebar-width: 240px;
+            --topbar-height: 56px;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-base: #F5F6FA;
+            --bg-surface: #FFFFFF;
+            --bg-elevated: #ECEEF5;
+            --border: #DDE1EE;
+            --accent: #5B52E8;
+            --accent-hover: #4a41d6;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s, color 0.3s;
+            position: relative;
+        }
+
+        /* Subtle Noise Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif-text {
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;
+            line-height: 1.1;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        button {
+            background: none;
+            border: none;
+            font-family: inherit;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* Layout */
+        #app {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-smooth);
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            height: var(--topbar-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border);
+            gap: 0.5rem;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition-fast);
+            position: relative;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: var(--bg-elevated);
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+            background: rgba(108, 99, 255, 0.1);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent);
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .sidebar-group-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            padding: 1.5rem 1.5rem 0.5rem;
+            font-weight: 600;
+        }
+
+        .exam-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Main Area */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* Topbar */
+        .topbar {
+            height: var(--topbar-height);
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            z-index: 100;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb span {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            transition: var(--transition-fast);
+            color: var(--text-secondary);
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* View Container */
+        .view-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            scroll-behavior: smooth;
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dashboard UI */
+        .greeting {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .date {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .streak-badge {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: var(--transition-fast);
+        }
+
+        .stat-card:hover {
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0.5rem 0 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            margin-top: 2rem;
+        }
+
+        .exam-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .exam-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exam-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .exam-info p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition-fast);
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-elevated);
+            border-color: var(--text-muted);
+        }
+
+        /* Practice UI Layer 1 (Chapters) */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            transition: var(--transition-fast);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text-primary);
+        }
+
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .chapter-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .chapter-card h4 {
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .difficulty-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            font-weight: 700;
+            height: fit-content;
+        }
+
+        .diff-Hard {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .diff-Medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .diff-Easy {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-elevated);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 1s ease-out;
+        }
+
+        /* Practice & Test UI */
+        .workspace {
+            display: flex;
+            gap: 1.5rem;
+            height: calc(100vh - var(--topbar-height) - 4rem);
+        }
+
+        .palette-panel {
+            width: 360px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .palette-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .palette-grid {
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+            overflow-y: auto;
+            flex: 1;
+            align-content: start;
+        }
+
+        .q-node {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border: 1px solid var(--border);
+            background: var(--bg-elevated);
+            font-weight: 500;
+        }
+
+        .q-node:hover {
+            border-color: var(--text-muted);
+        }
+
+        .q-node.current {
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Node states */
+        .q-node.visited {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        /* Skipped/Not Answered */
+        .q-node.answered {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: var(--success);
+        }
+
+        .q-node.review {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: var(--warning);
+        }
+
+        .q-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .q-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .q-body {
+            padding: 2rem 1.5rem;
+            flex: 1;
+            overflow-y: auto;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .q-text {
+            margin-bottom: 2rem;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-elevated);
+        }
+
+        .option:hover {
+            border-color: var(--accent);
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background: rgba(108, 99, 255, 0.1);
+            box-shadow: inset 3px 0 0 var(--accent);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
+            box-shadow: inset 3px 0 0 var(--success);
+        }
+
+        .option.wrong {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+            box-shadow: inset 3px 0 0 var(--danger);
+            text-decoration: line-through;
+            opacity: 0.8;
+        }
+
+        .option-label-char {
+            font-weight: 600;
+            margin-right: 1rem;
+            color: var(--text-muted);
+        }
+
+        .option.selected .option-label-char {
+            color: var(--accent);
+        }
+
+        .q-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-elevated);
+        }
+
+        /* Solution Box */
+        .solution-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(34, 197, 94, 0.05);
+            border-left: 3px solid var(--success);
+            display: none;
+        }
+
+        .solution-box.visible {
+            display: block;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        /* Timer */
+        .timer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .timer.danger {
+            color: var(--danger);
+            animation: pulseTimer 1s infinite;
+        }
+
+        @keyframes pulseTimer {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toast i {
+            color: var(--accent);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-exit {
+            animation: fadeOut 0.3s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+        }
+
+        /* Mobile Adjustments */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 900;
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .menu-btn {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .palette-panel {
+                width: 100%;
+                height: 250px;
+            }
+
+            .q-area {
+                min-height: 500px;
+            }
+
+            .palette-grid {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+                align-items: center;
+            }
+
+            .q-node {
+                min-width: 40px;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                height: 100vh;
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .menu-btn {
+                display: flex;
+                margin-right: 1rem;
+            }
+
+            .mobile-overlay.open {
+                display: block;
+                opacity: 1;
+            }
+
+            .greeting {
+                font-size: 2rem;
+            }
+        }
+
+        /* Results UI */
+        .results-header {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .score-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 4rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .bar-chart {
+            margin-top: 2rem;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .bar-label {
+            width: 100px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 12px;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--accent);
+        }
+
+        .bar-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            width: 50px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <i data-lucide="flask-conical"></i> Mock Lab
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-target="dashboard" onclick="navigate('dashboard')">
+                    <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item" data-target="practice" onclick="navigate('practice')">
+                    <i data-lucide="pen-tool" style="width: 18px; height: 18px;"></i> Practice Mode
+                </a>
+                <a href="#" class="nav-item" data-target="mock-test" onclick="navigate('mock-test')">
+                    <i data-lucide="clock" style="width: 18px; height: 18px;"></i> Mock Test
+                </a>
+                <a href="#" class="nav-item" data-target="results" onclick="navigate('results')">
+                    <i data-lucide="bar-chart-2" style="width: 18px; height: 18px;"></i> My Results
+                </a>
+
+                <div class="sidebar-group-label">Exams</div>
+                <div id="exam-list-container">
+                    <!-- Populated by JS -->
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <span>v1.0 Beta</span>
+                <button class="icon-btn" style="width:24px;height:24px;" aria-label="Feedback"><i
+                        data-lucide="message-square" style="width:14px;height:14px;"></i></button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-wrapper">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div style="display: flex; align-items: center;">
+                    <button class="icon-btn menu-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="breadcrumb mono" id="top-breadcrumb">
+                        <span>Dashboard</span>
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    <div id="test-timer" class="timer" style="display: none;">
+                        <i data-lucide="timer" style="width: 18px; height: 18px;"></i>
+                        <span id="timer-text">03:00:00</span>
+                    </div>
+                    <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle Theme" id="themeBtn">
+                        <i data-lucide="moon" id="themeIcon"></i>
+                    </button>
+                    <button class="icon-btn" aria-label="Notifications">
+                        <i data-lucide="bell"></i>
+                    </button>
+                    <div class="avatar">S</div>
+                </div>
+            </header>
+
+            <!-- Views Container -->
+            <div class="view-container" id="view-container">
+
+                <!-- Dashboard View -->
+                <div id="dashboard" class="view active">
+                    <h1 class="greeting serif-text">Good morning, Siddhant 👋</h1>
+                    <p class="date"><i data-lucide="calendar" style="width: 14px; height: 14px;"></i> <span
+                            id="current-date"></span> <span class="streak-badge"><i data-lucide="flame"
+                                style="width: 12px; height: 12px;"></i> 12 Day Streak</span></p>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Questions Solved</div>
+                            <div class="stat-value" id="stat-solved">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Accuracy</div>
+                            <div class="stat-value" id="stat-acc">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Tests Taken</div>
+                            <div class="stat-value" id="stat-tests">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Rank Estimate</div>
+                            <div class="stat-value">-</div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-title serif-text">Available Exams</h3>
+                    <div class="exam-cards" id="dashboard-exams">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Practice View -->
+                <div id="practice" class="view">
+                    <!-- Layer 1: Selection -->
+                    <div id="practice-selector">
+                        <h2 class="serif-text" style="font-size: 2rem; margin-bottom: 2rem;">Question Practice</h2>
+                        <div class="tabs">
+                            <div class="tab active">Physics</div>
+                            <div class="tab">Chemistry</div>
+                            <div class="tab">Mathematics</div>
+                        </div>
+                        <div class="chapter-grid" id="practice-chapters">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Layer 2: Workspace -->
+                    <div id="practice-workspace" class="workspace" style="display: none;">
+                        <!-- Palette -->
+                        <aside class="palette-panel">
+                            <div class="palette-header">
+                                <span>Question Palette</span>
+                                <span class="mono" style="font-size: 0.8rem; color: var(--text-muted);"
+                                    id="q-progress">1 / 50</span>
+                            </div>
+                            <div
+                                style="padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); display: flex; gap: 0.5rem; font-size: 0.75rem;">
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <div
+                                        style="width:8px;height:8px;background:var(--bg-elevated);border:1px solid var(--border);">
+                                    </div> Unvisited
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <div
+                                        style="width:8px;height:8px;background:rgba(239,68,68,0.1);border:1px solid var(--danger);">
+                                    </div> Skipped
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <div
+                                        style="width:8px;height:8px;background:rgba(34,197,94,0.1);border:1px solid var(--success);">
+                                    </div> Answered
+                                </div>
+                            </div>
+                            <div class="palette-grid" id="q-palette">
+                                <!-- Populated by JS -->
+                            </div>
+                        </aside>
+
+                        <!-- Question Area -->
+                        <section class="q-area">
+                            <div class="q-header">
+                                <span class="mono" style="font-weight: 600;" id="q-title">Q.1 of 50</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-secondary" style="padding: 0.4rem 0.6rem;"
+                                        onclick="showToast('Bookmarked')"><i data-lucide="bookmark"
+                                            style="width: 16px; height: 16px;"></i></button>
+                                    <button class="btn btn-secondary" style="padding: 0.4rem 0.6rem;"
+                                        onclick="showToast('Reported issue')"><i data-lucide="alert-triangle"
+                                            style="width: 16px; height: 16px;"></i></button>
+                                </div>
+                            </div>
+                            <div class="q-body">
+                                <div class="q-text" id="q-desc">Loading question...</div>
+                                <div class="options-list" id="q-options">
+                                    <!-- Options generated by JS -->
+                                </div>
+                                <div class="solution-box" id="q-solution">
+                                    <h4 style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="check-circle" style="color: var(--success); width: 18px;"></i>
+                                        Solution</h4>
+                                    <div id="solution-text"></div>
+                                </div>
+                            </div>
+                            <div class="q-footer">
+                                <button class="btn btn-secondary" onclick="prevQuestion()"><i data-lucide="arrow-left"
+                                        style="width: 16px;"></i> Previous</button>
+                                <div style="display: flex; gap: 1rem;">
+                                    <button class="btn btn-secondary" id="btn-check" onclick="checkAnswer()">Check
+                                        Answer</button>
+                                    <button class="btn btn-primary" onclick="nextQuestion()">Next <i
+                                            data-lucide="arrow-right" style="width: 16px;"></i></button>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- Mock Test View -->
+                <div id="mock-test" class="view">
+                    <div id="test-pre">
+                        <h2 class="serif-text" style="font-size: 2.5rem; margin-bottom: 2rem;">Full Syllabus Mock Test
+                        </h2>
+                        <div class="chapter-card" style="max-width: 600px; margin: 0 auto;">
+                            <h3 class="serif-text"
+                                style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--accent);">JEE Advanced
+                                Pattern Paper 1</h3>
+                            <ul style="color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.8;">
+                                <li><i data-lucide="clock"
+                                        style="width: 16px; display:inline-block; vertical-align:middle; margin-right:8px;"></i>
+                                    Duration: 3 Hours</li>
+                                <li><i data-lucide="hash"
+                                        style="width: 16px; display:inline-block; vertical-align:middle; margin-right:8px;"></i>
+                                    Total Questions: 54</li>
+                                <li><i data-lucide="alert-circle"
+                                        style="width: 16px; display:inline-block; vertical-align:middle; margin-right:8px;"></i>
+                                    Marking: +3 for correct, -1 for incorrect</li>
+                            </ul>
+                            <button class="btn btn-primary"
+                                style="width: 100%; justify-content: center; font-size: 1.1rem; padding: 0.75rem;"
+                                onclick="startMockTest()">Start Test Simulator</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results View (Placeholder stub) -->
+                <div id="results" class="view">
+                    <div class="results-header">
+                        <h2 class="serif-text">Test Completed</h2>
+                        <div class="score-display">0<span style="font-size: 2rem; color: var(--text-muted)">/180</span>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-top: 0.5rem;">Estimated Percentile: 0.0</p>
+                    </div>
+                    <div class="chapter-card" style="max-width: 600px; margin: 0 auto;">
+                        <h3>Subject Analysis</h3>
+                        <div class="bar-chart">
+                            <div class="bar-row">
+                                <div class="bar-label">Physics</div>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width: 0%;"></div>
+                                </div>
+                                <div class="bar-score">0/0</div>
+                            </div>
+                            <div class="bar-row">
+                                <div class="bar-label">Chemistry</div>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width: 0%;"></div>
+                                </div>
+                                <div class="bar-score">0/0</div>
+                            </div>
+                            <div class="bar-row">
+                                <div class="bar-label">Mathematics</div>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width: 0%;"></div>
+                                </div>
+                                <div class="bar-score">0/0</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center;">
+                            <button class="btn btn-secondary" onclick="navigate('dashboard')">Back to Home</button>
+                            <button class="btn btn-primary" onclick="navigate('practice')">Review Weak Areas</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // DATABASE HOOK — Mock Data Defs
+        // Replace with actual API fetches
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const MOCK_EXAMS = [
+            { id: 'JEE_MAIN', name: 'JEE Main', color: '#3B82F6', subjects: ['Physics', 'Chemistry', 'Mathematics'] },
+            { id: 'JEE_ADV', name: 'JEE Advanced', color: '#8B5CF6', subjects: ['Physics', 'Chemistry', 'Mathematics'] },
+            { id: 'NEET', name: 'NEET UG', color: '#10B981', subjects: ['Physics', 'Chemistry', 'Biology'] },
+            { id: 'GATE_CS', name: 'GATE CS', color: '#F59E0B', subjects: ['CS & IT', 'Engineering Maths', 'Aptitude'] },
+            { id: 'UPSC', name: 'UPSC CSE', color: '#EF4444', subjects: ['History', 'Polity', 'Geography'] }
+        ];
+
+        const MOCK_QUESTIONS = [
+            {
+                id: 'q001',
+                exam: 'JEE_ADV',
+                subject: 'Physics',
+                chapter: 'Modern Physics',
+                difficulty: 'Hard',
+                text: 'A hydrogen-like atom has nuclear charge $Ze$. The wavelength of the first line of Balmer series is given by which of the following expressions?',
+                options: [
+                    '$$\\lambda = \\frac{36h}{5RZ^2}$$',
+                    '$$\\lambda = \\frac{hc}{R}$$',
+                    '$$\\lambda = \\frac{36}{5RZ^2}$$',
+                    '$$\\lambda = \\frac{5R}{36Z^2}$$',
+                ],
+                correctIndex: 2,
+                solution: 'Using Rydberg formula for hydrogen-like atoms: $$\\frac{1}{\\lambda} = RZ^2\\left(\\frac{1}{2^2} - \\frac{1}{3^2}\\right) = \\frac{5RZ^2}{36}$$. Therefore, $$\\lambda = \\frac{36}{5RZ^2}$$',
+                tags: ['spectroscopy', 'hydrogen-atom', 'rydberg']
+            },
+            {
+                id: 'q002',
+                exam: 'JEE_ADV',
+                subject: 'Physics',
+                chapter: 'Mechanics',
+                difficulty: 'Medium',
+                text: 'A block of mass $m$ is released from rest from the top of a smooth inclined plane of inclination $\\theta$. The velocity of the block when it has completely slid down the length $L$ of the incline is:',
+                options: [
+                    '$$\\sqrt{gL \\sin\\theta}$$',
+                    '$$\\sqrt{2gL \\sin\\theta}$$',
+                    '$$\\sqrt{2gL \\cos\\theta}$$',
+                    '$$gL \\sin\\theta$$'
+                ],
+                correctIndex: 1,
+                solution: 'By Conservation of Energy: Loss in PE = Gain in KE. $$mgL \\sin\\theta = \\frac{1}{2}mv^2$$. Solving gives $$v = \\sqrt{2gL \\sin\\theta}$$.',
+                tags: ['energy', 'kinematics']
+            },
+            {
+                id: 'q003',
+                exam: 'JEE_ADV',
+                subject: 'Physics',
+                chapter: 'Electrodynamics',
+                difficulty: 'Hard',
+                text: 'The electric field inside a uniformly charged solid sphere of radius $R$ and total charge $Q$ at a distance $r < R$ is:',
+                options: [
+                    '$$E = \\frac{1}{4\\pi\\epsilon_0}\\frac{Q}{r^2}$$',
+                    '$$E = 0$$',
+                    '$$E = \\frac{1}{4\\pi\\epsilon_0}\\frac{Qr}{R^3}$$',
+                    '$$E = \\frac{1}{4\\pi\\epsilon_0}\\frac{Q}{R^2}$$'
+                ],
+                correctIndex: 2,
+                solution: 'Using Gauss\'s Law for $r < R$: $$\\oint E \\cdot dA = \\frac{q_{enc}}{\\epsilon_0}$$. Here $$q_{enc} = Q\\frac{r^3}{R^3}$$. So $$E(4\\pi r^2) = \\frac{Qr^3}{\\epsilon_0 R^3}$$, which simplifies to option C.',
+                tags: ['gauss-law', 'electric-field']
+            }
+        ];
+
+        // State Management
+        const state = {
+            theme: localStorage.getItem('theme') || 'dark',
+            currentView: 'dashboard',
+            selectedExam: null,
+            currentQuestions: [...MOCK_QUESTIONS, ...MOCK_QUESTIONS, ...MOCK_QUESTIONS, ...MOCK_QUESTIONS].map((q, i) => ({ ...q, id: `q_${i}` })), // Duplicate for demo padding
+            currentIndex: 0,
+            answers: {}, // questionId: optionIndex
+            mode: 'practice', // 'practice' or 'test'
+            timeRemaining: 10800, // 3 hours
+            timerInterval: null
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+            applyTheme();
+            renderExamsSidebar();
+            // SUPABASE CONNECTION BOILERPLATE
+            // const supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
+            // const supabaseKey = 'YOUR_SUPABASE_KEY_HERE';
+            // window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+            // DATABASE HOOK: Fetch logic for initial dashboard stats (e.g., await supabaseClient.from('user_stats').select('*'))
+            setTimeout(() => {
+                animateCounter('stat-solved', 0);
+                animateCounter('stat-acc', 0, '%');
+                animateCounter('stat-tests', 0);
+            }, 300);
+
+            // Populate dashboard cards
+            const dashExams = document.getElementById('dashboard-exams');
+            dashExams.innerHTML = MOCK_EXAMS.slice(0, 3).map(ex => `
+                <div class="exam-card">
+                    <div class="exam-info">
+                        <h4><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${ex.color}; margin-right:8px;"></span>${ex.name}</h4>
+                        <p>0 Tests Available • 0 Questions</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="navigate('practice'); setExam('${ex.id}')">Start</button>
+                </div>
+            `).join('');
+
+        });
+
+        // ━━━ Navigation & UI ━━━
+
+        function navigate(viewId) {
+            // Hide all views
+            document.querySelectorAll('.view').forEach(v => {
+                v.classList.remove('active');
+            });
+            // Show new view
+            document.getElementById(viewId).classList.add('active');
+            state.currentView = viewId;
+
+            // Update Sidebar nav highlight
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => {
+                if (n.dataset.target) n.classList.remove('active');
+            });
+            const activeNav = document.querySelector(`.sidebar-nav .nav-item[data-target="${viewId}"]`);
+            if (activeNav) activeNav.classList.add('active');
+
+            // Close mobile sidebar
+            if (window.innerWidth <= 768) toggleSidebar();
+
+            // Set Breadcrumb
+            document.getElementById('top-breadcrumb').innerHTML = `<span>${viewId.charAt(0).toUpperCase() + viewId.slice(1).replace('-', ' ')}</span>`;
+
+            // View specific logic
+            if (viewId === 'practice') {
+                renderPracticeChapters();
+                document.getElementById('practice-selector').style.display = 'block';
+                document.getElementById('practice-workspace').style.display = 'none';
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('mobileOverlay').classList.toggle('open');
+        }
+
+        function renderExamsSidebar() {
+            const container = document.getElementById('exam-list-container');
+            container.innerHTML = MOCK_EXAMS.map(ex => `
+                <a href="#" class="nav-item" onclick="setExam('${ex.id}'); navigate('practice');">
+                    <div class="exam-dot" style="background-color: ${ex.color}"></div>
+                    ${ex.name}
+                </a>
+            `).join('');
+        }
+
+        function setExam(examId) {
+            state.selectedExam = MOCK_EXAMS.find(e => e.id === examId);
+            showToast(`Selected ${state.selectedExam.name}`);
+            document.getElementById('top-breadcrumb').innerHTML = `<span>${state.selectedExam.name}</span> <i data-lucide="chevron-right" style="width:14px;"></i> <span>Practice</span>`;
+            lucide.createIcons();
+            if (state.currentView === 'practice') renderPracticeChapters();
+        }
+
+        // ━━━ Theme ━━━
+        function applyTheme() {
+            document.documentElement.setAttribute('data-theme', state.theme);
+            const icon = document.getElementById('themeIcon');
+            if (icon) {
+                icon.setAttribute('data-lucide', state.theme === 'dark' ? 'sun' : 'moon');
+                lucide.createIcons();
+            }
+        }
+
+        function toggleTheme() {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', state.theme);
+            applyTheme();
+        }
+
+        // ━━━ Practice Mode Logic ━━━
+        function renderPracticeChapters() {
+            // DATABASE HOOK: Fetch Chapters from API
+            const chaptersArea = document.getElementById('practice-chapters');
+            const placeholderChapters = ['Kinematics', 'Laws of Motion', 'Work, Energy & Power', 'Rotational Mechanics', 'Gravitation', 'Thermodynamics'];
+
+            chaptersArea.innerHTML = placeholderChapters.map(ch => `
+                <div class="chapter-card">
+                    <h4>${ch} <span class="difficulty-badge diff-Medium">Medium</span></h4>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; display: flex; justify-content:space-between;">
+                        <span>Progress</span> <span>0 / 0</span>
+                    </p>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;" onclick="startPractice('${ch}')">Practice Now</button>
+                </div>
+            `).join('');
+        }
+
+        function startPractice(chapter) {
+            document.getElementById('practice-selector').style.display = 'none';
+            document.getElementById('practice-workspace').style.display = 'flex';
+
+            document.getElementById('top-breadcrumb').innerHTML = `
+                <span>${state.selectedExam ? state.selectedExam.name : 'JEE'}</span> 
+                <i data-lucide="chevron-right" style="width:14px;"></i> <span>Physics</span>
+                <i data-lucide="chevron-right" style="width:14px;"></i> <span>${chapter}</span>
+            `;
+            lucide.createIcons();
+
+            state.mode = 'practice';
+            state.currentIndex = 0;
+            state.answers = {};
+
+            // DATABASE HOOK: Fetch questions for this chapter
+
+            renderPalette();
+            loadQuestion(0);
+        }
+
+        function renderPalette() {
+            const grid = document.getElementById('q-palette');
+            grid.innerHTML = state.currentQuestions.map((q, i) => {
+                // Determine class based on state.answers
+                let statusCls = '';
+                if (state.answers[q.id] !== undefined) statusCls = 'answered';
+                else if (i < state.currentIndex) statusCls = 'visited';
+
+                let curCls = i === state.currentIndex ? ' current' : '';
+
+                return `<div class="q-node ${statusCls}${curCls}" onclick="loadQuestion(${i})" id="node-${i}">${i + 1}</div>`;
+            }).join('');
+            document.getElementById('q-progress').innerText = `${state.currentIndex + 1} / ${state.currentQuestions.length}`;
+        }
+
+        function loadQuestion(index) {
+            if (index < 0 || index >= state.currentQuestions.length) return;
+
+            // Update Palette UI
+            const oldNode = document.getElementById(`node-${state.currentIndex}`);
+            if (oldNode) {
+                oldNode.classList.remove('current');
+                if (!oldNode.classList.contains('answered')) oldNode.classList.add('visited');
+            }
+
+            state.currentIndex = index;
+            document.getElementById(`node-${index}`).classList.add('current');
+            document.getElementById('q-progress').innerText = `${index + 1} / ${state.currentQuestions.length}`;
+
+            const q = state.currentQuestions[index];
+            const hasAnswered = state.answers[q.id] !== undefined;
+
+            document.getElementById('q-title').innerText = `Q.${index + 1} of ${state.currentQuestions.length}`;
+            document.getElementById('q-desc').innerHTML = q.text;
+
+            const chars = ['A', 'B', 'C', 'D'];
+            document.getElementById('q-options').innerHTML = q.options.map((opt, i) => {
+                let cls = '';
+                const isSelected = state.answers[q.id] === i;
+                if (isSelected) cls = 'selected';
+
+                // If in practice mode and already answered, show correct/wrong
+                if (state.mode === 'practice' && hasAnswered) {
+                    if (i === q.correctIndex) cls += ' correct';
+                    else if (isSelected) cls += ' wrong';
+                }
+
+                return `
+                    <div class="option ${cls}" onclick="selectOption(${i})">
+                        <span class="option-label-char">(${chars[i]})</span>
+                        <div class="opt-text">${opt}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Hide/Show solution box
+            const solBox = document.getElementById('q-solution');
+            if (state.mode === 'practice' && hasAnswered) {
+                document.getElementById('solution-text').innerHTML = q.solution;
+                solBox.classList.add('visible');
+                document.getElementById('btn-check').style.display = 'none';
+            } else {
+                solBox.classList.remove('visible');
+                document.getElementById('btn-check').style.display = 'block';
+            }
+
+            // Math Rendering using KaTeX auto-render
+            renderMathInElement(document.getElementById('q-desc'), {
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false }
+                ],
+                throwOnError: false
+            });
+            renderMathInElement(document.getElementById('q-options'), {
+                delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }]
+            });
+            if (hasAnswered) {
+                renderMathInElement(solBox, {
+                    delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }]
+                });
+            }
+        }
+
+        function selectOption(optIndex) {
+            const q = state.currentQuestions[state.currentIndex];
+            // Prevent changing answer if already submitted in practice mode
+            if (state.mode === 'practice' && state.answers[q.id] !== undefined) return;
+
+            state.answers[q.id] = optIndex;
+
+            // Re-render options to show selection
+            const opts = document.querySelectorAll('.option');
+            opts.forEach((o, i) => {
+                if (i === optIndex) o.classList.add('selected');
+                else o.classList.remove('selected');
+            });
+
+            if (state.mode === 'test') {
+                // Instantly record in test mode
+                document.getElementById(`node-${state.currentIndex}`).classList.add('answered');
+                document.getElementById(`node-${state.currentIndex}`).style.transform = 'scale(1.1)';
+                setTimeout(() => { document.getElementById(`node-${state.currentIndex}`).style.transform = ''; }, 200);
+            }
+        }
+
+        function checkAnswer() {
+            if (state.mode !== 'practice') return;
+            const q = state.currentQuestions[state.currentIndex];
+            if (state.answers[q.id] === undefined) {
+                showToast("Please select an option first", "error");
+                return;
+            }
+
+            // DATABASE HOOK: POST answer to /api/answers { userId, questionId, selectedOption, isCorrect }
+
+            const isCorrect = state.answers[q.id] === q.correctIndex;
+            showToast(isCorrect ? "Correct Answer! +3" : "Incorrect. See solution.", isCorrect ? "success" : "error");
+
+            // Update palette node
+            document.getElementById(`node-${state.currentIndex}`).classList.add('answered');
+            document.getElementById(`node-${state.currentIndex}`).style.transform = 'scale(1.1)';
+            setTimeout(() => { document.getElementById(`node-${state.currentIndex}`).style.transform = ''; }, 200);
+
+            // Re-load to show solution and formatting
+            loadQuestion(state.currentIndex);
+        }
+
+        function nextQuestion() {
+            if (state.currentIndex < state.currentQuestions.length - 1) {
+                loadQuestion(state.currentIndex + 1);
+            } else if (state.mode === 'test') {
+                submitTest();
+            } else {
+                showToast("End of practice set. Great job!");
+            }
+        }
+
+        function prevQuestion() {
+            if (state.currentIndex > 0) loadQuestion(state.currentIndex - 1);
+        }
+
+        // ━━━ Mock Test Logic ━━━
+        function startMockTest() {
+            state.mode = 'test';
+            state.currentIndex = 0;
+            state.answers = {};
+            state.timeRemaining = 10800; // 3 hours in seconds
+
+            document.getElementById('mock-test').classList.remove('active');
+            document.getElementById('practice').classList.add('active'); // Re-use workspace UI
+
+            document.getElementById('practice-selector').style.display = 'none';
+            document.getElementById('practice-workspace').style.display = 'flex';
+
+            document.getElementById('btn-check').style.display = 'none'; // Hide "Check Answer" in test mode
+
+            // Start Timer UI updates
+            document.getElementById('test-timer').style.display = 'flex';
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            state.timerInterval = setInterval(updateTimer, 1000);
+
+            renderPalette();
+            loadQuestion(0);
+            showToast("Test Started. Good Luck!");
+        }
+
+        function updateTimer() {
+            if (state.timeRemaining <= 0) {
+                clearInterval(state.timerInterval);
+                submitTest();
+                return;
+            }
+            state.timeRemaining--;
+
+            const h = Math.floor(state.timeRemaining / 3600);
+            const m = Math.floor((state.timeRemaining % 3600) / 60);
+            const s = state.timeRemaining % 60;
+
+            const text = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            const timerEl = document.getElementById('test-timer');
+            document.getElementById('timer-text').innerText = text;
+
+            if (state.timeRemaining < 300) { // < 5 mins
+                timerEl.classList.add('danger');
+            } else {
+                timerEl.classList.remove('danger');
+            }
+        }
+
+        function submitTest() {
+            clearInterval(state.timerInterval);
+            document.getElementById('test-timer').style.display = 'none';
+
+            // DATABASE HOOK: Calculate score and POST to /api/results
+            // Show dummy Results
+            navigate('results');
+            showToast("Test Submitted Successfully", "success");
+        }
+
+        // ━━━ Utils ━━━
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+
+            let iconStr = '<i data-lucide="info"></i>';
+            if (type === 'success') toast.style.borderLeft = '3px solid var(--success)';
+            if (type === 'error') toast.style.borderLeft = '3px solid var(--danger)';
+
+            toast.innerHTML = `${iconStr} <span>${message}</span>`;
+            container.appendChild(toast);
+            lucide.createIcons({ root: toast });
+
+            setTimeout(() => {
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function animateCounter(id, target, suffix = "") {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const duration = 1500;
+            const frames = 60;
+            const step = Math.ceil(target / frames);
+            let current = 0;
+
+            const int = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(int);
+                }
+                el.innerText = current.toLocaleString() + suffix;
+            }, duration / frames);
+        }
+
+    </script>
+</body>
+
+</html>

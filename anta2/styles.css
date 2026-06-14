@@ -1,0 +1,361 @@
+:root {
+  --bg: #071019;
+  --bg-elev: #0d1822;
+  --bg-panel: #0f1c28;
+  --line: #22394c;
+  --text: #d8e5ee;
+  --muted: #87a0b5;
+  --accent: #4fd1ff;
+  --accent-2: #6bffb3;
+  --warn: #ffbf47;
+  --danger: #ff5e5e;
+  --good: #79ff9b;
+  --shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(79, 209, 255, 0.1), transparent 30%),
+    linear-gradient(180deg, #08121a 0%, #071019 100%);
+  color: var(--text);
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+body {
+  overflow: hidden;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.boot-error {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  z-index: 1000;
+  padding: 14px 16px;
+  border: 1px solid #6c2d2d;
+  background: rgba(46, 10, 10, 0.96);
+  color: #ffd8d8;
+  box-shadow: var(--shadow);
+}
+
+button,
+select,
+input {
+  font: inherit;
+}
+
+.app-shell {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(8, 18, 27, 0.88);
+  backdrop-filter: blur(18px);
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--accent);
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.status-strip {
+  display: flex;
+  gap: 12px;
+}
+
+.status-card {
+  min-width: 120px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  box-shadow: var(--shadow);
+}
+
+.status-card span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.status-card strong {
+  display: block;
+  margin-top: 5px;
+}
+
+.warning-card strong {
+  color: var(--good);
+}
+
+.workspace {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 14px;
+  padding: 14px;
+}
+
+.sidebar,
+.main-column {
+  min-height: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent),
+    var(--bg-panel);
+  box-shadow: var(--shadow);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 14px;
+}
+
+.compact-grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.control-grid label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.control-grid input,
+.control-grid select,
+button {
+  width: 100%;
+  border: 1px solid #23465b;
+  background: #09131b;
+  color: var(--text);
+  padding: 9px 10px;
+}
+
+.inline-check {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.inline-check input {
+  width: auto;
+  margin: 0;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0 14px 14px;
+}
+
+button {
+  cursor: pointer;
+  transition: background 120ms ease, transform 120ms ease, border-color 120ms ease;
+}
+
+button:hover {
+  background: #12202d;
+  border-color: #2b6c8c;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.main-column {
+  display: grid;
+  grid-template-rows: minmax(320px, 1.15fr) minmax(250px, 0.85fr);
+  gap: 14px;
+}
+
+.viewport-grid {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.viewport-grid:not(.compare-enabled) {
+  grid-template-columns: 1fr;
+}
+
+.viewport-panel {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.viewport-panel canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background:
+    radial-gradient(circle at top, rgba(79, 209, 255, 0.07), transparent 35%),
+    linear-gradient(180deg, #081119, #050b11 55%, #071019);
+}
+
+.metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+}
+
+.metric-card {
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.metric-card span {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 16px;
+}
+
+.telemetry-grid {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 14px;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px;
+}
+
+.chart {
+  width: 100%;
+  height: 150px;
+  border: 1px solid var(--line);
+  background: #09131b;
+}
+
+.console-table,
+.batch-results,
+.notes {
+  padding: 12px 14px 14px;
+  overflow: auto;
+}
+
+.console-row,
+.batch-row {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 0.9fr 0.9fr;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 12px;
+}
+
+.console-row strong,
+.batch-row strong {
+  color: var(--text);
+}
+
+.notes p {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.pill {
+  display: inline-block;
+  padding: 3px 7px;
+  border: 1px solid currentColor;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.danger {
+  color: var(--danger);
+}
+
+.warn {
+  color: var(--warn);
+}
+
+.good {
+  color: var(--good);
+}
+
+@media (max-width: 1300px) {
+  .workspace {
+    grid-template-columns: 320px 1fr;
+  }
+
+  .chart-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

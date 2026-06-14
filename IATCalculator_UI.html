@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>THE MOCK LAB | IAT Marks Calculator</title>
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-surface": "#e2e2e2",
+                        "surface-tint": "#00dbe9",
+                        "primary-fixed": "#7df4ff",
+                        "primary-fixed-dim": "#00dbe9",
+                        "on-primary": "#00363a",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "on-primary-container": "#006970",
+                        "outline-variant": "#3b494b",
+                        "surface-container-high": "#2a2a2a",
+                        "on-background": "#e2e2e2",
+                        "surface-container-low": "#1b1b1b",
+                        "surface-container-highest": "#353535",
+                        "surface-bright": "#393939",
+                        "secondary-fixed-dim": "#00e639",
+                        "surface-dim": "#131313",
+                        "on-secondary-container": "#007117",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container": "#1f1f1f",
+                        "primary": "#dbfcff",
+                        "tertiary": "#f5f5f5",
+                        "on-secondary": "#003907",
+                        "on-error": "#690005",
+                        "on-primary-fixed": "#002022",
+                        "surface-variant": "#353535",
+                        "primary-container": "#00f0ff",
+                        "inverse-on-surface": "#303030",
+                        "secondary-fixed": "#72ff70",
+                        "on-secondary-fixed": "#002203",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-surface-variant": "#b9cacb",
+                        "secondary": "#ecffe3",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-container": "#5d5f5f",
+                        "tertiary-container": "#d9d9d9",
+                        "inverse-surface": "#e2e2e2",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "secondary-container": "#13ff43",
+                        "on-tertiary": "#2f3131",
+                        "surface": "#131313",
+                        "outline": "#849495",
+                        "inverse-primary": "#006970",
+                        "on-secondary-fixed-variant": "#00530e",
+                        "background": "#131313",
+                        "on-tertiary-fixed-variant": "#454747"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin-desktop": "64px",
+                        "grid-stroke": "0.5px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Space Mono"],
+                        "headline-lg-mobile": ["Space Mono"],
+                        "body-md": ["JetBrains Mono"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-xl": ["Space Mono"],
+                        "body-sm": ["JetBrains Mono"],
+                        "data-mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.15em", "fontWeight": "700" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.05em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "data-mono": ["13px", { "lineHeight": "1.2", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+            background-image:
+                linear-gradient(to right, #3b494b 0.5px, transparent 0.5px),
+                linear-gradient(to bottom, #3b494b 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            color: #e2e2e2;
+        }
+
+        .glass-panel {
+            background-color: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(20px);
+            background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+        }
+
+        .glitch-hover:hover {
+            animation: glitch 0.2s cubic-bezier(.25, .46, .45, .94) both infinite;
+            color: #000000;
+            background-color: #00dbe9;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        .emissive-cyan {
+            box-shadow: 0 0 15px rgba(0, 219, 233, 0.3);
+        }
+
+        .hex-clip {
+            clip-path: polygon(10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%, 0 10%);
+        }
+
+        @media (max-width: 768px) {
+            .hex-clip {
+                clip-path: polygon(5% 0, 95% 0, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0 95%, 0 5%);
+            }
+        }
+
+        .scanline-overlay::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(255, 255, 255, 0.05) 51%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Preloader Styles */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background-color: #000000;
+            background-image: 
+                linear-gradient(to right, #3b494b 0.5px, transparent 0.5px),
+                linear-gradient(to bottom, #3b494b 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+        }
+
+        #preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #preloader-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #00dbe9;
+            text-shadow: 0 0 20px rgba(0, 219, 233, 0.6);
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            text-align: center;
+            min-height: 4.5rem;
+        }
+
+        @media (min-width: 768px) {
+            #preloader-text {
+                font-size: 4rem;
+                min-height: 6rem;
+            }
+        }
+
+        #preloader-subtext {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: #e2e2e2;
+            margin-top: 1rem;
+            opacity: 0.7;
+            letter-spacing: 0.1em;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col font-body-md text-on-surface">
+    <!-- Preloader Overlay -->
+    <div id="preloader">
+        <div id="preloader-text"></div>
+        <div class="animate-pulse" id="preloader-subtext">SYS_BOOT // DECRYPTING_SECTOR_2047</div>
+    </div>
+    <!-- TopAppBar -->
+    <header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface/70 backdrop-blur-xl border-b border-outline-variant shadow-[0_0_15px_rgba(0,219,233,0.1)]">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 border border-primary-fixed-dim/50 rounded flex items-center justify-center p-1 bg-black/50 emissive-cyan">
+                <img alt="The Mock Lab Logo" class="w-full h-full object-contain filter grayscale brightness-200 contrast-200 hue-rotate-180 mix-blend-screen" src="https://lh3.googleusercontent.com/aida/AP1WRLt2oUc4aD2tmUFk12kYNd37DWr14oc3MPs45lee6u_d4LnOXpCs3IjJuOhTq0o9sxoQQcscgrk-rCZ0FfdGJk_XAAzVd3ijLHICTbzI4_lQaUNbRjQliCxAMnF1VvYHVe4rC6tk1K-dPp4ApZ-JGPZijx7GS87uZba1ADI0wwgrxFBU8v22_Hn9v_ACXbmUwBkpl8rOfEr5FZxUFp7zGXkc6E8-C2m4qVYX8bt5QWgTsrgn7q_BnaReL100"/>
+            </div>
+            <h1 class="font-headline-lg text-headline-lg text-primary-fixed-dim tracking-tighter md:block hidden">THE_MOCK_LAB</h1>
+            <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary-fixed-dim tracking-tighter md:hidden block">THE_MOCK_LAB</h1>
+        </div>
+        <nav class="hidden md:flex gap-gutter font-label-caps text-label-caps">
+            <span class="text-primary-fixed font-bold cursor-pointer hover:text-primary-container transition-colors duration-300">STATUS: ONLINE</span>
+            <span class="text-on-surface-variant cursor-pointer hover:text-primary-container transition-colors duration-300">UPLINK_READY</span>
+        </nav>
+        <button class="border border-primary-fixed-dim text-primary-fixed-dim px-4 py-2 font-label-caps text-label-caps glitch-hover transition-colors">
+            INITIALIZE_UPLOAD
+        </button>
+    </header>
+    <!-- SideNavBar (Desktop) -->
+    <aside class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-20 hover:w-64 z-40 flex-col bg-surface-container-lowest/80 backdrop-blur-2xl border-r border-outline-variant transition-all duration-500 overflow-hidden group">
+        <div class="p-4 border-b border-outline-variant whitespace-nowrap min-w-[256px]">
+            <div class="font-data-mono text-data-mono text-on-surface-variant mb-1">OPERATOR_ID_01</div>
+            <div class="font-headline-lg text-headline-lg text-primary-fixed truncate">SEC_04</div>
+            <div class="font-label-caps text-label-caps text-primary-fixed-dim">DATA_NODE</div>
+        </div>
+        <nav class="flex-1 py-4 flex flex-col gap-2 min-w-[256px]">
+            <a class="flex items-center px-4 py-3 bg-secondary-container/20 text-secondary-fixed border-r-2 border-secondary-fixed-dim transition-all duration-300 ease-in-out hover:bg-surface-container-high hover:text-on-surface" href="#">
+                <span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 1;">calculate</span>
+                <span class="font-label-caps text-label-caps opacity-0 group-hover:opacity-100 transition-opacity duration-300">CALCULATOR</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-variant/30 transition-all duration-300 ease-in-out hover:bg-surface-container-high hover:text-on-surface" href="#">
+                <span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">analytics</span>
+                <span class="font-label-caps text-label-caps opacity-0 group-hover:opacity-100 transition-opacity duration-300">ANALYTICS</span>
+            </a>
+            <a class="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-variant/30 transition-all duration-300 ease-in-out hover:bg-surface-container-high hover:text-on-surface" href="#">
+                <span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">settings</span>
+                <span class="font-label-caps text-label-caps opacity-0 group-hover:opacity-100 transition-opacity duration-300">SETTINGS</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Canvas -->
+    <main class="flex-1 pt-24 pb-20 md:pb-8 md:pl-28 px-margin-mobile md:px-margin-desktop flex flex-col gap-8">
+        
+        <!-- Upload Zone -->
+        <label class="glass-panel border border-outline-variant p-8 md:p-12 relative flex flex-col items-center justify-center min-h-[300px] scanline-overlay cursor-pointer group hover:border-primary-fixed-dim transition-colors duration-300" id="pdfDropzone">
+            <input type="file" id="pdfInput" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+            <div class="absolute top-0 left-0 bg-black/50 px-2 py-1 border-b border-r border-outline-variant">
+                <span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">SYS.DROP.ZONE // UPLOAD_PROTOCOL</span>
+            </div>
+            <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary-fixed-dim opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary-fixed-dim opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary-fixed-dim opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary-fixed-dim opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            
+            <div class="w-24 h-24 rounded-full border border-primary-fixed/30 flex items-center justify-center mb-6 emissive-cyan group-hover:bg-primary-fixed/10 transition-colors duration-300 relative" id="upload-icon-container">
+                <div class="absolute inset-0 rounded-full border border-primary-fixed animate-ping opacity-20"></div>
+                <span class="material-symbols-outlined text-5xl text-primary-fixed-dim" style="font-variation-settings: 'FILL' 0;" id="upload-icon">upload_file</span>
+            </div>
+            
+            <h2 class="font-headline-lg text-headline-lg md:hidden text-center tracking-tight mb-2 text-primary-fixed">INITIALIZE SCAN</h2>
+            <h2 class="hidden md:block font-headline-xl text-headline-xl text-center tracking-tight mb-2 text-primary-fixed">INITIALIZE SCAN</h2>
+            
+            <p class="font-data-mono text-data-mono text-on-surface-variant text-center max-w-md" id="pdf-text">
+                AWAITING_INPUT: DROP PDF TRANSCRIPT HERE OR CLICK TO BROWSE LOCAL DIRECTORY. ENCRYPTION PROTOCOLS STANDBY.
+            </p>
+            <span class="hidden" id="btn-icon"></span>
+        </label>
+
+        <!-- Results Detail Table / Grid -->
+        <div id="dashboard" style="display: none;">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="font-headline-md text-headline-md text-primary flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary-fixed-dim">analytics</span>
+                    PERFORMANCE_BREAKDOWN
+                </h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
+
+                <!-- Score Card -->
+                <div class="glass-panel border border-outline-variant p-6 relative hex-clip">
+                    <div class="absolute top-2 left-2 text-[10px] font-label-caps text-on-surface-variant">MOD_01 // TOT</div>
+                    <div class="absolute top-2 right-2 border border-secondary-fixed/50 px-2 py-0.5 text-[10px] font-label-caps text-secondary-fixed bg-secondary-fixed/10 animate-pulse">DECRYPTED</div>
+                    <div class="mt-8 flex items-center gap-4">
+                        <div>
+                            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">TOTAL SCORE</h3>
+                            <div class="font-data-mono text-data-mono text-on-surface-variant mt-1" id="scoreRemark">STATUS: OPTIMAL</div>
+                        </div>
+                    </div>
+                    <div class="mt-6 border-t border-outline-variant/50 pt-4 grid grid-cols-2 gap-2">
+                        <div>
+                            <div class="font-label-caps text-label-caps text-xs text-on-surface-variant mb-1">CALCULATED_SCORE</div>
+                            <div class="font-data-mono text-3xl font-bold"><span id="totalScore">0</span><span class="text-lg opacity-60">/240</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Correct Card -->
+                <div class="glass-panel border border-outline-variant p-6 relative hex-clip">
+                    <div class="absolute top-2 left-2 text-[10px] font-label-caps text-on-surface-variant">MOD_02 // COR</div>
+                    <div class="absolute top-2 right-2 border border-primary-fixed/50 px-2 py-0.5 text-[10px] font-label-caps text-primary-fixed bg-primary-fixed/10 animate-pulse">SUCCESS</div>
+                    <div class="mt-8 flex items-center gap-4">
+                        <div>
+                            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">CORRECT</h3>
+                            <div class="font-data-mono text-data-mono text-on-surface-variant mt-1">+4 MARKS EACH</div>
+                        </div>
+                    </div>
+                    <div class="mt-6 border-t border-outline-variant/50 pt-4 grid grid-cols-2 gap-2">
+                        <div>
+                            <div class="font-label-caps text-label-caps text-xs text-on-surface-variant mb-1">TOTAL_CORRECT</div>
+                            <div class="font-data-mono text-3xl font-bold text-primary-fixed"><span id="totalCorrect">0</span><span class="text-lg opacity-60">/60</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wrong Card -->
+                <div class="glass-panel border border-outline-variant p-6 relative hex-clip">
+                    <div class="absolute top-2 left-2 text-[10px] font-label-caps text-on-surface-variant">MOD_03 // WRG</div>
+                    <div class="absolute top-2 right-2 border border-error/50 px-2 py-0.5 text-[10px] font-label-caps text-error bg-error/10 animate-pulse">PENALTY</div>
+                    <div class="mt-8 flex items-center gap-4">
+                        <div>
+                            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">INCORRECT</h3>
+                            <div class="font-data-mono text-data-mono text-on-surface-variant mt-1">-1 MARK EACH</div>
+                        </div>
+                    </div>
+                    <div class="mt-6 border-t border-outline-variant/50 pt-4 grid grid-cols-2 gap-2">
+                        <div>
+                            <div class="font-label-caps text-label-caps text-xs text-on-surface-variant mb-1">TOTAL_WRONG</div>
+                            <div class="font-data-mono text-3xl font-bold text-error"><span id="totalWrong">0</span><span class="text-lg opacity-60">/60</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attempted Card -->
+                <div class="glass-panel border border-outline-variant p-6 relative hex-clip">
+                    <div class="absolute top-2 left-2 text-[10px] font-label-caps text-on-surface-variant">MOD_04 // ATT</div>
+                    <div class="absolute top-2 right-2 border border-secondary-fixed/50 px-2 py-0.5 text-[10px] font-label-caps text-secondary-fixed bg-secondary-fixed/10 animate-pulse">COMPLETED</div>
+                    <div class="mt-8 flex items-center gap-4">
+                        <div>
+                            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">ATTEMPTED</h3>
+                            <div class="font-data-mono text-data-mono text-on-surface-variant mt-1">OUT OF 60 Qs</div>
+                        </div>
+                    </div>
+                    <div class="mt-6 border-t border-outline-variant/50 pt-4 grid grid-cols-2 gap-2">
+                        <div>
+                            <div class="font-label-caps text-label-caps text-xs text-on-surface-variant mb-1">QUESTIONS_ATTEMPTED</div>
+                            <div class="font-data-mono text-3xl font-bold text-secondary-fixed"><span id="totalAttempted">0</span><span class="text-lg opacity-60">/60</span></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-6 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-gutter bg-black border-t border-outline-variant bg-[linear-gradient(to_right,#3b494b_1px,transparent_1px),linear-gradient(to_bottom,#3b494b_1px,transparent_1px)] bg-[size:24px_24px] z-40 md:pl-28 relative">
+        <span class="font-label-caps text-label-caps text-primary">IAT_CALC_V2.0 // ENGINEERED FOR PRECISION</span>
+        <nav class="flex gap-6 font-label-caps text-label-caps">
+            <a class="text-on-tertiary-fixed-variant hover:text-primary-fixed-dim underline transition-opacity duration-200" href="#">CORE_PROTOCOL</a>
+            <a class="text-on-tertiary-fixed-variant hover:text-primary-fixed-dim underline transition-opacity duration-200" href="#">TERMS_OF_USE</a>
+            <a class="text-on-tertiary-fixed-variant hover:text-primary-fixed-dim underline transition-opacity duration-200" href="#">SYSTEM_LOGS</a>
+        </nav>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const preloader = document.getElementById('preloader');
+            const textElement = document.getElementById('preloader-text');
+            const targetText = "THE MOCK LAB";
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:',.<>?/`~";
+            let iterations = 0;
+            const maxIterations = 40;
+            const intervalTime = 40;
+
+            const interval = setInterval(() => {
+                textElement.innerText = targetText.split("").map((char, index) => {
+                    if(char === " ") return " ";
+                    if(index < iterations / (maxIterations / targetText.length)) {
+                        return targetText[index];
+                    }
+                    return chars[Math.floor(Math.random() * chars.length)];
+                }).join("");
+
+                if(iterations >= maxIterations) {
+                    clearInterval(interval);
+                    textElement.innerText = targetText;
+                    setTimeout(() => {
+                        preloader.classList.add('fade-out');
+                        setTimeout(() => {
+                            preloader.style.display = 'none';
+                        }, 800);
+                    }, 800);
+                }
+                iterations++;
+            }, intervalTime);
+        });
+
+    </script>
+</body>
+</html>

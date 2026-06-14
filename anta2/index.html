@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rocket Aerodynamics & Reentry Analysis Simulator</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="https://unpkg.com/three@0.169.0/build/three.min.js"></script>
+  </head>
+  <body>
+    <div class="boot-error hidden" id="bootError"></div>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">AEROTHERMAL ANALYSIS SUITE</p>
+          <h1>Rocket Aerodynamics & Reentry Simulator</h1>
+        </div>
+        <div class="status-strip">
+          <div class="status-card">
+            <span>Mode</span>
+            <strong id="runModeLabel">Paused</strong>
+          </div>
+          <div class="status-card">
+            <span>Replay</span>
+            <strong id="replayLabel">Idle</strong>
+          </div>
+          <div class="status-card warning-card" id="maxQWarning">
+            <span>Warning</span>
+            <strong>Nominal</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="sidebar">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Simulation Control</h2>
+            </div>
+            <div class="control-grid">
+              <label>
+                Primary Rocket
+                <select id="rocketA"></select>
+              </label>
+              <label>
+                Secondary Rocket
+                <select id="rocketB"></select>
+              </label>
+              <label class="inline-check">
+                <input type="checkbox" id="compareToggle" checked />
+                Enable side-by-side compare
+              </label>
+              <label>
+                Simulation Speed
+                <input type="range" id="simSpeed" min="0.1" max="8" step="0.1" value="1" />
+              </label>
+              <label>
+                Launch Angle (deg)
+                <input type="range" id="launchAngle" min="75" max="90" step="0.5" value="87" />
+              </label>
+              <label>
+                Payload Mass (kg)
+                <input type="range" id="payloadMass" min="0" max="30000" step="250" value="4500" />
+              </label>
+              <label>
+                Engine Thrust (%)
+                <input type="range" id="thrustPercent" min="55" max="110" step="1" value="100" />
+              </label>
+              <label>
+                Wind Speed (m/s)
+                <input type="range" id="windSpeed" min="0" max="80" step="1" value="12" />
+              </label>
+              <label>
+                Stage Timing Bias (s)
+                <input type="range" id="stageTimingBias" min="-20" max="20" step="0.5" value="0" />
+              </label>
+              <label>
+                Reentry Angle (deg)
+                <input type="range" id="reentryAngle" min="-8" max="-1" step="0.1" value="-5.5" />
+              </label>
+              <label>
+                Nose Cone
+                <select id="noseCone">
+                  <option value="ogive">Von Karman / Ogive</option>
+                  <option value="cone">Cone</option>
+                  <option value="blunt">Blunt Reentry</option>
+                </select>
+              </label>
+              <label>
+                Material
+                <select id="material"></select>
+              </label>
+              <label>
+                View Mode
+                <select id="viewMode">
+                  <option value="pressure">Pressure Heatmap</option>
+                  <option value="thermal">Thermal Scan</option>
+                  <option value="structural">Structural Loads</option>
+                  <option value="neutral">Neutral CAD View</option>
+                </select>
+              </label>
+              <label class="inline-check">
+                <input type="checkbox" id="crossSectionToggle" />
+                Cross-section mode
+              </label>
+              <label class="inline-check">
+                <input type="checkbox" id="failureModeToggle" checked />
+                Failure mode simulation
+              </label>
+            </div>
+            <div class="button-row">
+              <button id="startBtn">Start</button>
+              <button id="pauseBtn">Pause</button>
+              <button id="stepBtn">Step</button>
+              <button id="resetBtn">Reset</button>
+              <button id="replayBtn">Replay</button>
+            </div>
+            <div class="button-row">
+              <button id="exportCsvBtn">Export CSV</button>
+              <button id="exportJsonBtn">Export JSON</button>
+              <button id="reportBtn">Export Report</button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Automated Analysis</h2>
+            </div>
+            <div class="control-grid compact-grid">
+              <label>
+                Monte Carlo Samples
+                <input type="range" id="mcSamples" min="5" max="80" step="1" value="20" />
+              </label>
+              <label>
+                Batch Duration (s)
+                <input type="range" id="batchDuration" min="180" max="900" step="30" value="480" />
+              </label>
+            </div>
+            <div class="button-row">
+              <button id="batchBtn">Run Monte Carlo</button>
+              <button id="compareReportBtn">Compare Report</button>
+            </div>
+            <div class="batch-results" id="batchResults"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Engineering Notes</h2>
+            </div>
+            <div class="notes" id="engineeringNotes"></div>
+          </section>
+        </aside>
+
+        <section class="main-column">
+          <div class="viewport-grid compare-enabled" id="viewportGrid">
+            <section class="panel viewport-panel">
+              <div class="panel-header">
+                <h2>Primary Analysis View</h2>
+                <span id="simALabel">Vehicle A</span>
+              </div>
+              <canvas id="viewportA"></canvas>
+              <div class="metrics-strip" id="metricsA"></div>
+            </section>
+            <section class="panel viewport-panel" id="secondaryPanel">
+              <div class="panel-header">
+                <h2>Secondary Analysis View</h2>
+                <span id="simBLabel">Vehicle B</span>
+              </div>
+              <canvas id="viewportB"></canvas>
+              <div class="metrics-strip" id="metricsB"></div>
+            </section>
+          </div>
+
+          <div class="telemetry-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Telemetry Trends</h2>
+              </div>
+              <div class="chart-grid">
+                <canvas class="chart" id="velocityChart"></canvas>
+                <canvas class="chart" id="altitudeChart"></canvas>
+                <canvas class="chart" id="temperatureChart"></canvas>
+                <canvas class="chart" id="qChart"></canvas>
+                <canvas class="chart" id="dragChart"></canvas>
+                <canvas class="chart" id="gLoadChart"></canvas>
+                <canvas class="chart" id="fuelChart"></canvas>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Telemetry Console</h2>
+              </div>
+              <div class="console-table" id="consoleTable"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script defer src="./app.js"></script>
+  </body>
+</html>
