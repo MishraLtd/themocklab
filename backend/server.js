@@ -21,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/upload", upload.single("pdf"), async (req, res) => {
+    console.log("FILE:", req.file);
     try {
         const dataBuffer =
             req.file.buffer;
