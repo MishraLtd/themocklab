@@ -541,7 +541,7 @@
             formData.append("pdf", file);
 
             const uploadResponse = await fetch(
-                "http://localhost:3000/upload",
+                "https://themocklab.vercel.app/upload",
                 {
                     method: "POST",
                     body: formData
@@ -572,7 +572,7 @@
                 const result =
                     calculateScore(fullText);
                 const saveResponse = await fetch(
-                    "http://localhost:3000/save-result",
+                    "https://themocklab.vercel.app/save-result",
                     {
                         method: "POST",
                         headers: {
