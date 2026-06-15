@@ -23,8 +23,18 @@ app.get("/", (req, res) => {
 app.post("/upload", upload.single("pdf"), async (req, res) => {
     console.log("FILE:", req.file);
     try {
-        const dataBuffer =
-            req.file.buffer;
+        if (!req.file) {
+            console.log("NO FILE RECEIVED");
+
+            return res.status(400).json({
+                success: false,
+                error: "No file received by backend"
+            });
+        }
+
+        console.log("FILE RECEIVED:", req.file.originalname);
+
+        const dataBuffer = req.file.buffer;
 
         const pdfData = await pdfParse(dataBuffer);
         const candidateInfo =
